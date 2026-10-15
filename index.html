@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Macondo interactivo — Cien años de soledad</title>
+<style>
+:root{--ink:#29251f;--paper:#fff9ed;--gold:#d9a441;--leaf:#355b49;--rose:#9e5a51}
+*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:17px/1.65 Georgia,serif}
+header{padding:4rem 1.25rem;text-align:center;color:#fff;background:linear-gradient(120deg,#1c392fdd,#4b4930bb),url('https://images.unsplash.com/photo-1470252649378-9c29740c9fa8?auto=format&fit=crop&w=1600&q=85') center/cover}
+h1{font-size:clamp(2.4rem,7vw,5rem);line-height:1.05;margin:.4rem auto;max-width:850px}header p{max-width:650px;margin:1rem auto}
+main{max-width:950px;margin:auto;padding:1.2rem}section{background:#fffdf7;border:1px solid #e8dcc4;border-radius:18px;padding:clamp(1rem,4vw,2rem);margin:1.2rem 0;box-shadow:0 5px 22px #47351b0b}
+h2{color:var(--leaf);line-height:1.2}.muted{color:#655f55;font-size:.92rem}.choices{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:.7rem}
+button,.button{font:inherit;cursor:pointer;border:0;border-radius:10px;background:var(--leaf);color:white;padding:.7rem 1rem;text-decoration:none;display:inline-block}
+button:hover,.button:hover{filter:brightness(1.12)}button.secondary{background:#e9dfca;color:var(--ink)}
+.card{border:1px solid #e4d8c0;border-radius:12px;padding:1rem;background:#fffaf0}
+.gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:1rem}.gallery img{width:100%;height:175px;object-fit:cover;border-radius:10px}
+label{display:block;margin:.5rem 0}textarea{width:100%;min-height:110px;padding:.8rem;border:1px solid #cbbd9f;border-radius:10px;font:inherit;background:#fffefb}
+audio{width:100%}a{color:#315f50}footer{text-align:center;padding:2rem;color:#655f55}
+#feedback{font-weight:bold;margin-top:.8rem}.hidden{display:none}.pill{display:inline-block;background:#f0e1b8;border-radius:999px;padding:.15rem .7rem;font-size:.85rem}
+</style>
+</head>
+<body>
+<header>
+<div class="pill">OBRA DIGITAL INTERACTIVA</div>
+<h1>Macondo: un viaje por <em>Cien años de soledad</em></h1>
+<p>Una experiencia para leer, mirar, escuchar, preguntar y crear inspirada en la novela de Gabriel García Márquez.</p>
+</header>
+<main>
+<section id="entrada">
+<h2>01 · Entra en Macondo: una historia con caminos diferentes</h2>
+<p>Amanece en Macondo. Frente a ti hay tres caminos y una carta sin abrir. Tus decisiones cambiarán la forma de leer la historia y el final que descubrirás. No hay una única respuesta correcta: cada ruta revela un tema distinto de la novela.</p>
+<div class="card">
+<p class="pill">PASO 1 · Elige cómo quieres vivir la historia</p>
+<div class="choices">
+<button onclick="choosePath('leer')">📖 Leer pistas y relatos</button>
+<button onclick="choosePath('explorar')">🖼️ Explorar símbolos e imágenes</button>
+<button onclick="choosePath('escuchar')">🎧 Seguir sonidos y recuerdos</button>
+</div>
+<div id="pathText" aria-live="polite" style="margin-top:1rem">Elige una opción para abrir tu primer camino.</div>
+</div>
+<div id="decision" class="card hidden" style="margin-top:1rem">
+<p class="pill">PASO 2 · Tu primera decisión</p>
+<h3 id="decisionTitle">¿Qué haces?</h3>
+<div id="decisionChoices" class="choices"></div>
+</div>
+<div id="ending" class="card hidden" style="margin-top:1rem" aria-live="polite">
+<p class="pill">TU FINAL</p><h3 id="endingTitle"></h3><p id="endingText"></p>
+<p><strong>Pregunta para reflexionar:</strong> <span id="endingQuestion"></span></p>
+<button onclick="restartStory()">↻ Volver a empezar y descubrir otro final</button>
+</div>
+<p class="muted">Puedes recorrer la historia más de una vez: al cambiar tus elecciones, cambiarán las preguntas y el desenlace.</p>
+</section>
+
+<section id="historia-novela">
+<h2>02 · La historia de <em>Cien años de soledad</em></h2>
+<div class="card" style="margin:1rem 0">
+<p><strong>🎧 Escucha el resumen de la historia</strong></p>
+<p class="muted">La narración usa la voz en español disponible en tu dispositivo y no necesita pagar ni descargar un audio.</p>
+<button type="button" onclick="listenNovelStory()">▶ Escuchar historia</button>
+<button type="button" class="secondary" onclick="stopNovelStory()">■ Detener audio</button>
+<span id="storyAudioStatus" class="muted" aria-live="polite"></span>
+</div>
+<p><em>Cien años de soledad</em>, de Gabriel García Márquez, cuenta la historia de varias generaciones de la familia Buendía y la transformación de Macondo: desde su fundación hasta su desaparición. En la novela, los hechos extraordinarios conviven con la vida cotidiana, una característica del realismo mágico.</p>
+<div class="card">
+<h3>1. La fundación de Macondo</h3>
+<p>José Arcadio Buendía y Úrsula Iguarán dejan su lugar de origen y, junto con otras familias, fundan Macondo. Tienen tres hijos: José Arcadio, Aureliano y Amaranta. La preocupación por una antigua superstición familiar acompaña a Úrsula durante buena parte de su vida.</p>
+</div>
+<div class="card">
+<h3>2. Los gitanos y Melquíades</h3>
+<p>Las visitas de los gitanos acercan a Macondo inventos y conocimientos desconocidos para sus habitantes. Melquíades se convierte en una figura importante para José Arcadio Buendía y deja unos manuscritos cuyo significado solo se comprenderá mucho después.</p>
+</div>
+<div class="card">
+<h3>3. La familia crece y la historia se repite</h3>
+<p>Con las siguientes generaciones aparecen amores difíciles, rivalidades, secretos y conflictos. Los nombres José Arcadio y Aureliano se repiten, y muchos descendientes parecen quedar atrapados en patrones familiares parecidos.</p>
+</div>
+<div class="card">
+<h3>4. Las guerras y los cambios en Macondo</h3>
+<p>El coronel Aureliano Buendía participa en las guerras civiles. Más adelante, la llegada del ferrocarril y de una compañía bananera transforma el pueblo. La novela también aborda la violencia contra los trabajadores y el olvido colectivo de lo ocurrido.</p>
+</div>
+<div class="card">
+<h3>5. La decadencia y el final</h3>
+<p>Después de un largo periodo de lluvias, Macondo queda cada vez más abandonado y la familia Buendía se reduce. Aureliano Babilonia descifra finalmente los manuscritos de Melquíades y descubre que contienen la historia de la familia. El destino de los Buendía y el de Macondo llegan a su fin.</p>
+</div>
+<h3>Personajes para recordar</h3>
+<ul>
+<li><strong>José Arcadio Buendía:</strong> fundador de Macondo, curioso y obsesionado con los nuevos conocimientos.</li>
+<li><strong>Úrsula Iguarán:</strong> matriarca que sostiene y cuida a la familia durante generaciones.</li>
+<li><strong>Coronel Aureliano Buendía:</strong> hijo de los fundadores que se convierte en figura de las guerras civiles.</li>
+<li><strong>Melquíades:</strong> gitano relacionado con los inventos y los manuscritos proféticos.</li>
+<li><strong>Amaranta Úrsula y Aureliano Babilonia:</strong> personajes de la última etapa de la historia familiar.</li>
+</ul>
+<p><strong>Temas centrales:</strong> la soledad, la memoria y el olvido, el paso del tiempo, la repetición de la historia, los vínculos familiares y la relación entre lo maravilloso y lo cotidiano.</p>
+<p class="muted">Este apartado resume la trama con palabras propias; no reproduce pasajes extensos de la novela.</p>
+</section>
+
+<section>
+<h2>03 · Galería de símbolos</h2>
+<div class="gallery">
+<article class="card"><img alt="Paisaje verde y brumoso" src="https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=700&q=80"><h3>El paisaje</h3><p>La naturaleza envuelve Macondo y convierte el entorno en parte de la imaginación.</p></article>
+<article class="card"><img alt="Casa antigua" src="https://images.unsplash.com/photo-1511818966892-d7d671e672a2?auto=format&fit=crop&w=700&q=80"><h3>La casa familiar</h3><p>Un espacio de recuerdos, secretos, vínculos y conflictos entre generaciones.</p></article>
+<article class="card"><img alt="Manuscrito antiguo: cuaderno abierto y escritura" src="https://images.unsplash.com/photo-1517842645767-c639042777db?auto=format&fit=crop&w=700&q=80" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1455390582262-044c08959242?auto=format&fit=crop&w=700&q=80'"><h3>Los manuscritos</h3><p>Evocan los enigmas, el conocimiento y la posibilidad de descifrar el pasado.</p></article>
+<article class="card"><img alt="Mariposa amarilla" src="https://images.unsplash.com/photo-1508610048659-a06b669e3321?auto=format&fit=crop&w=700&q=80"><h3>Las mariposas</h3><p>Una imagen asociada a Mauricio Babilonia y al amor en la novela.</p></article>
+</div>
+<p class="muted">Las imágenes son ilustrativas y proceden de enlaces externos; se necesita conexión a internet para cargarlas.</p>
+</section>
+<section>
+<h2>04 · Escucha el ambiente</h2>
+<p>Mientras lees, prueba escuchar lluvia, agua y aves para imaginar la atmósfera de Macondo.</p>
+<p><a class="button" href="https://www.youtube.com/results?search_query=sonidos+de+lluvia+r%C3%ADo+y+aves+naturaleza" target="_blank" rel="noopener">▶ Abrir paisaje sonoro</a>
+<a class="button" href="https://www.penguinlibros.com/es/audiolibros-de-literatura-contemporanea/15375-audiolibro-cien-anos-de-soledad" target="_blank" rel="noopener">🎧 Buscar audiolibro</a></p>
+<p class="muted">Los enlaces abren recursos externos y no reproducen audio dentro de esta página.</p>
+<p><strong>Reflexiona:</strong> ¿Cómo cambia tu interpretación cuando escuchas sonidos de la naturaleza mientras lees?</p>
+</section>
+<section>
+<h2>05 · Cuestionario interactivo</h2>
+<div id="quiz"></div><div id="feedback" aria-live="polite"></div>
+<button id="next" class="secondary hidden" onclick="nextQuestion()">Siguiente pregunta →</button>
+</section>
+<section>
+<h2>06 · Sigue explorando gratis</h2>
+<p>Estos enlaces llevan a recursos educativos, bibliotecas y materiales de consulta que puedes abrir sin comprar una suscripción. Algunos estudios académicos pueden ofrecerse como documentos descargables.</p>
+<ul>
+<li><a href="https://www.bibliotecanacional.gov.co/es-co/colecciones/biblioteca-digital/gaboteca/sobre-ggm?Categoria=An%C3%A1lisis+por+obra&amp;subcategoria=Cien+a%C3%B1os+de+soledad" target="_blank" rel="noopener">Gaboteca de la Biblioteca Nacional de Colombia: análisis y materiales sobre la novela</a></li>
+<li><a href="https://biblored.gov.co/programate/expedicion-macondo-la-familia-buendia" target="_blank" rel="noopener">BibloRed: conoce a la familia Buendía</a></li>
+<li><a href="https://bibliotecadigital.univalle.edu.co/browse/subject?value=Cien+A%C3%B1os+de+Soledad" target="_blank" rel="noopener">Biblioteca Digital de la Universidad del Valle: investigaciones de acceso abierto</a></li>
+<li><a href="https://www.cervantesvirtual.com/portales/tomas_de_iriarte/obra/cien-anos-de-soledad-novela-de-gabriel-garcia-marquez-904219/" target="_blank" rel="noopener">Biblioteca Virtual Miguel de Cervantes: ficha y reseña bibliográfica</a></li>
+<li><a href="https://www.nobelprize.org/prizes/literature/1982/marquez/biographical/" target="_blank" rel="noopener">Premio Nobel: biografía de Gabriel García Márquez</a></li>
+<li><a href="https://www.educ.ar/recursos/158062/cien-anos-de-soledad-de-gabriel-garcia-marquez" target="_blank" rel="noopener">Educ.ar: recurso educativo sobre la novela</a></li>
+</ul>
+<p class="muted">Los enlaces anteriores son recursos de consulta gratuitos; eso no significa que la novela completa esté disponible legalmente gratis en todos ellos. Si una página cambia, prueba el catálogo de la biblioteca correspondiente.</p>
+</section>
+<section>
+<h2>07 · Tu voz también forma parte de Macondo</h2>
+<label for="topic">Elige un tema para reflexionar</label>
+<select id="topic" style="font:inherit;padding:.6rem;border-radius:8px;width:100%">
+<option>La memoria y el olvido</option><option>La soledad y las relaciones humanas</option><option>El paso del tiempo y los ciclos familiares</option><option>La fantasía y la realidad</option>
+</select>
+<label for="reflection">Escribe tu interpretación o una pregunta para debatir en clase</label>
+<textarea id="reflection" placeholder="Mi interpretación de la novela es…"></textarea>
+<button onclick="copyReflection()">Copiar reflexión</button> <span id="copymsg" class="muted" aria-live="polite"></span>
+</section>
+<section>
+<h2>Conclusión</h2>
+<p><em>Cien años de soledad</em> nos invita a pensar en cómo las familias y las sociedades construyen sus recuerdos. Macondo convierte la lectura en una experiencia para observar, escuchar, investigar y crear.</p>
+<p class="muted">Proyecto educativo inspirado en la novela. No reproduce el texto original de la obra.</p>
+</section>
+</main>
+<footer>MACONDO INTERACTIVO · Leer también es explorar</footer>
+<script>
+const paths={
+leer:{text:"Encuentras un cuaderno con recuerdos de varias generaciones. En sus páginas, algunas historias se repiten y otras parecen haber sido olvidadas.",title:"¿Qué haces con el cuaderno?",choices:[["guardarlo","Lo guardas para proteger la memoria familiar."],["compartirlo","Lo lees con los habitantes para descubrir distintas versiones."]]},
+explorar:{text:"Llegas a una plaza con mariposas amarillas, una casa antigua y un manuscrito cubierto de polvo. Cada símbolo parece esconder una pista.",title:"¿Qué decides investigar?",choices:[["casa","Entras en la casa para descubrir los secretos del pasado."],["mariposas","Sigues las mariposas hacia un lugar desconocido."]]},
+escuchar:{text:"Oyes lluvia sobre los tejados, el rumor del río y voces que cuentan recuerdos contradictorios. Los sonidos parecen señalar dos rutas.",title:"¿Qué sonido sigues?",choices:[["lluvia","Sigues la lluvia hasta los archivos del pueblo."],["rio","Caminas hacia el río, donde los mayores cuentan historias."]]}
+};
+const endings={
+guardarlo:{title:"Final 1 · El archivo de la memoria",text:"Conservas el cuaderno y evitas que desaparezca. Sin embargo, comprendes que guardar los recuerdos no basta: también hay que interpretarlos y compartirlos. Macondo conserva su pasado, aunque quedan preguntas sin resolver.",question:"¿Puede una familia aprender de su historia si nadie conversa sobre ella?"},
+compartirlo:{title:"Final 2 · Las voces del pueblo",text:"Los habitantes se reúnen y comparan sus recuerdos. No todos coinciden, pero la conversación les permite comprender mejor lo ocurrido. Macondo descubre que la memoria también se construye entre muchas personas.",question:"¿Por qué es importante escuchar versiones diferentes de una misma historia?"},
+casa:{title:"Final 3 · La casa que recuerda",text:"En la casa encuentras objetos y cartas que revelan afectos, conflictos y errores repetidos. Decides registrar lo aprendido para que la siguiente generación pueda elegir otro camino.",question:"¿Estamos destinados a repetir los errores de quienes vivieron antes que nosotros?"},
+mariposas:{title:"Final 4 · El camino inesperado",text:"Sigues las mariposas hasta un jardín donde lo cotidiano parece mágico. Allí entiendes que la imaginación puede abrir nuevas formas de interpretar el mundo, aunque no borra el dolor ni los conflictos del pasado.",question:"¿Cómo puede la fantasía ayudarnos a mirar la realidad de otra manera?"},
+lluvia:{title:"Final 5 · La lluvia del olvido",text:"Llegas a los archivos y encuentras páginas incompletas. En lugar de inventar lo que falta, reúnes testimonios y aceptas que recordar también significa reconocer las lagunas de la historia.",question:"¿Qué podemos hacer cuando una parte de la historia se ha perdido?"},
+rio:{title:"Final 6 · El río de las historias",text:"Junto al río escuchas relatos de distintas generaciones. Comprendes que una comunidad vive no solo en sus edificios, sino también en las historias que transmite y transforma.",question:"¿Qué historia de tu comunidad merece ser contada para que no se olvide?"}
+};
+let selectedPath="";
+function choosePath(m){
+selectedPath=m;const p=paths[m];
+document.getElementById('pathText').textContent=p.text;
+document.getElementById('decisionTitle').textContent=p.title;
+document.getElementById('decisionChoices').innerHTML=p.choices.map(c=>`<button onclick="showEnding('${c[0]}')">${c[1]}</button>`).join('');
+document.getElementById('decision').classList.remove('hidden');
+document.getElementById('ending').classList.add('hidden');
+}
+function showEnding(id){
+const e=endings[id];
+document.getElementById('endingTitle').textContent=e.title;
+document.getElementById('endingText').textContent=e.text;
+document.getElementById('endingQuestion').textContent=e.question;
+document.getElementById('ending').classList.remove('hidden');
+document.getElementById('ending').scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+function restartStory(){
+document.getElementById('pathText').textContent='Elige una opción para abrir tu primer camino.';
+document.getElementById('decision').classList.add('hidden');
+document.getElementById('ending').classList.add('hidden');
+document.getElementById('entrada').scrollIntoView({behavior:'smooth',block:'start'});
+}
+const questions=[
+{q:"¿Quién escribió Cien años de soledad?",a:["Mario Vargas Llosa","Gabriel García Márquez","Pablo Neruda"],correct:1,why:"Gabriel García Márquez fue el escritor colombiano que publicó la novela en 1967."},
+{q:"¿Qué es Macondo?",a:["Una ciudad real narrada documentalmente","Un espacio ficticio donde conviven historia y fantasía","Un lugar sin relación con los Buendía"],correct:1,why:"Macondo es un espacio imaginario que permite explorar la memoria y la experiencia latinoamericana."},
+{q:"¿Qué tema central explora la novela?",a:["La soledad y la repetición de la historia","La exploración espacial","Una ciudad futurista"],correct:0,why:"La soledad, la memoria, el tiempo y los ciclos familiares son temas fundamentales."},
+{q:"¿Qué caracteriza al realismo mágico?",a:["La ausencia de fantasía","La convivencia de lo extraordinario con la vida cotidiana","Solo hechos científicos"],correct:1,why:"Los sucesos extraordinarios aparecen como parte natural de la vida cotidiana."}
+];
+let qi=0,answered=false,score=0;
+function renderQuiz(){
+answered=false;const q=questions[qi];document.getElementById('feedback').textContent='';
+document.getElementById('next').classList.add('hidden');
+document.getElementById('quiz').innerHTML=`<p class="pill">Pregunta ${qi+1} de ${questions.length}</p><h3>${q.q}</h3>`+q.a.map((a,i)=>`<label><input type="radio" name="answer" value="${i}"> ${a}</label>`).join('')+`<button onclick="checkAnswer()">Comprobar respuesta</button>`;
+}
+function checkAnswer(){if(answered)return;const sel=document.querySelector('input[name="answer"]:checked');if(!sel){document.getElementById('feedback').textContent='Elige una respuesta primero.';return}answered=true;const q=questions[qi];const ok=Number(sel.value)===q.correct;if(ok)score++;document.getElementById('feedback').textContent=(ok?'¡Correcto! ':'Puedes volver a intentarlo. ')+q.why;if(qi===questions.length-1)document.getElementById('next').textContent='Ver resultado';else document.getElementById('next').textContent='Siguiente pregunta →';document.getElementById('next').classList.remove('hidden')}
+function nextQuestion(){if(qi<questions.length-1){qi++;renderQuiz()}else{document.getElementById('quiz').innerHTML=`<h3>Resultado: ${score} de ${questions.length}</h3><p>Gracias por explorar Macondo. Puedes repetir el cuestionario o continuar con tu reflexión.</p><button onclick="qi=0;score=0;renderQuiz()">Repetir cuestionario</button>`;document.getElementById('feedback').textContent='';document.getElementById('next').classList.add('hidden')}}
+async function copyReflection(){const val='Tema: '+document.getElementById('topic').value+'\n\n'+document.getElementById('reflection').value;if(!document.getElementById('reflection').value.trim()){document.getElementById('copymsg').textContent='Escribe una reflexión primero.';return}try{await navigator.clipboard.writeText(val);document.getElementById('copymsg').textContent='¡Reflexión copiada!'}catch(e){const t=document.getElementById('reflection');t.select();document.getElementById('copymsg').textContent='Selecciona y copia el texto manualmente.'}}
+function listenNovelStory(){
+  const text = "Cien años de soledad, de Gabriel García Márquez, cuenta la historia de varias generaciones de la familia Buendía y la transformación de Macondo, desde su fundación hasta su desaparición. José Arcadio Buendía y Úrsula Iguarán fundan Macondo. Tienen tres hijos: José Arcadio, Aureliano y Amaranta. Las visitas de los gitanos llevan inventos y conocimientos al pueblo, y Melquíades deja unos manuscritos cuyo significado se comprenderá mucho después. Con las siguientes generaciones aparecen amores difíciles, rivalidades, secretos y conflictos. Los nombres José Arcadio y Aureliano se repiten, y muchos descendientes parecen quedar atrapados en patrones familiares parecidos. El coronel Aureliano Buendía participa en las guerras civiles. Más adelante, la llegada del ferrocarril y de una compañía bananera transforma Macondo. La novela también aborda la violencia contra los trabajadores y el olvido colectivo. Después de un largo periodo de lluvias, Macondo queda cada vez más abandonado y la familia Buendía se reduce. Aureliano Babilonia descifra finalmente los manuscritos de Melquíades y descubre que contienen la historia de la familia. El destino de los Buendía y el de Macondo llegan a su fin. Entre los temas centrales de la novela están la soledad, la memoria, el olvido, el paso del tiempo y la repetición de la historia.";
+  const status = document.getElementById("storyAudioStatus");
+  if (!("speechSynthesis" in window) || !("SpeechSynthesisUtterance" in window)) {
+    status.textContent = "Tu navegador no permite narración automática. Prueba abrir el archivo en Chrome.";
+    return;
+  }
+  window.speechSynthesis.cancel();
+  const utterance = new SpeechSynthesisUtterance(text);
+  utterance.lang = "es-CO";
+  utterance.rate = 0.92;
+  utterance.pitch = 1;
+  utterance.onstart = () => { status.textContent = " Narrando la historia…"; };
+  utterance.onend = () => { status.textContent = " Narración terminada."; };
+  utterance.onerror = () => { status.textContent = " No se pudo reproducir el audio. Inténtalo otra vez."; };
+  window.speechSynthesis.speak(utterance);
+}
+function stopNovelStory(){
+  if ("speechSynthesis" in window) window.speechSynthesis.cancel();
+  const status = document.getElementById("storyAudioStatus");
+  if (status) status.textContent = " Audio detenido.";
+}
+renderQuiz();
+</script>
+</body></html>
